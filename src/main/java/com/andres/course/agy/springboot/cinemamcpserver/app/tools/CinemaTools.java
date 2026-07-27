@@ -1,5 +1,6 @@
 package com.andres.course.agy.springboot.cinemamcpserver.app.tools;
 
+import com.andres.course.agy.springboot.cinemamcpserver.app.dto.MovieAudienceDto;
 import com.andres.course.agy.springboot.cinemamcpserver.app.dto.MovieScheduleDto;
 import com.andres.course.agy.springboot.cinemamcpserver.app.dto.MovieSummaryDto;
 import com.andres.course.agy.springboot.cinemamcpserver.app.models.Movie;
@@ -61,5 +62,28 @@ public class CinemaTools {
 
         Movie movie = matches.get(0);
         return MovieScheduleDto.found(movie.title(), movie.schedules());
+    }
+
+    /**
+     * Herramienta MCP que busca la clasificación y público recomendado de una película por su título (insensible a case).
+     *
+     * @param title Nombre o título de la película.
+     * @return Objeto MovieAudienceDto con la clasificación y público recomendado o un mensaje si no existe.
+     */
+    @McpTool(name = "getMovieAudience", description = "Obtiene la clasificación y el público recomendado de una película por su título (insensible a case)")
+    public MovieAudienceDto getMovieAudience(
+            @McpToolParam(description = "Nombre o título de la película", required = true) String title
+    ) {
+        if (title == null || title.isBlank()) {
+            return MovieAudienceDto.notFound("Sin título especificado");
+        }
+
+        List<Movie> matches = cinemaCatalogRepository.findByTitle(title);
+        if (matches.isEmpty()) {
+            return MovieAudienceDto.notFound(title);
+        }
+
+        Movie movie = matches.get(0);
+        return MovieAudienceDto.found(movie.title(), movie.rating(), movie.audience());
     }
 }
