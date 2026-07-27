@@ -1,16 +1,16 @@
-package com.andres.course.agy.springboot.cinemamcpserver.app.components;
+package com.andres.course.agy.springboot.cinemamcpserver.app.repositories;
 
 import com.andres.course.agy.springboot.cinemamcpserver.app.models.Movie;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Componente que centraliza el catálogo inmutable de películas en cartelera.
+ * Repositorio que centraliza el catálogo inmutable de películas en cartelera.
  */
-@Component
-public class CinemaCatalog {
+@Repository
+public class CinemaCatalogRepository {
 
     private static final List<Movie> CATALOG = List.of(
             new Movie(
