@@ -4,7 +4,7 @@ import com.andres.course.agy.springboot.cinemamcpserver.app.dto.MovieAudienceDto
 import com.andres.course.agy.springboot.cinemamcpserver.app.dto.MovieScheduleDto;
 import com.andres.course.agy.springboot.cinemamcpserver.app.dto.MovieSummaryDto;
 import com.andres.course.agy.springboot.cinemamcpserver.app.models.Movie;
-import com.andres.course.agy.springboot.cinemamcpserver.app.repositories.CinemaCatalogRepository;
+import com.andres.course.agy.springboot.cinemamcpserver.app.services.CinemaCatalogService;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
@@ -12,15 +12,15 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Herramientas MCP para consultar información del cine.
+ * Herramientas MCP para consultar información del cine a través de la capa de servicio.
  */
 @Component
 public class CinemaTools {
 
-    private final CinemaCatalogRepository cinemaCatalogRepository;
+    private final CinemaCatalogService cinemaCatalogService;
 
-    public CinemaTools(CinemaCatalogRepository cinemaCatalogRepository) {
-        this.cinemaCatalogRepository = cinemaCatalogRepository;
+    public CinemaTools(CinemaCatalogService cinemaCatalogService) {
+        this.cinemaCatalogService = cinemaCatalogService;
     }
 
     /**
@@ -30,7 +30,7 @@ public class CinemaTools {
      */
     @McpTool(name = "getMovies", description = "Devuelve todas las películas en cartelera con título, género, duración y clasificación")
     public List<MovieSummaryDto> getMovies() {
-        return cinemaCatalogRepository.getCatalog().stream()
+        return cinemaCatalogService.getCatalog().stream()
                 .map(movie -> new MovieSummaryDto(
                         movie.title(),
                         movie.genre(),
@@ -55,7 +55,7 @@ public class CinemaTools {
             return MovieScheduleDto.notFound("Sin título especificado");
         }
 
-        List<Movie> matches = cinemaCatalogRepository.findByTitle(title);
+        List<Movie> matches = cinemaCatalogService.findByTitle(title);
         if (matches.isEmpty()) {
             return MovieScheduleDto.notFound(title);
         }
@@ -78,7 +78,7 @@ public class CinemaTools {
             return MovieAudienceDto.notFound("Sin título especificado");
         }
 
-        List<Movie> matches = cinemaCatalogRepository.findByTitle(title);
+        List<Movie> matches = cinemaCatalogService.findByTitle(title);
         if (matches.isEmpty()) {
             return MovieAudienceDto.notFound(title);
         }
